@@ -8,35 +8,46 @@
 
 double pozycjaZadana[3];
 
-void callback(const sensor_msgs::JointStateConstPtr &msg)
+// Funkcja do pobrania wartości zadanych
+void callback(const sensor_msgs::JointStateConstPtr &msg) 
 {
-	pozycjaZadana[0]=msg->position[1];
-	std::cout<<pozycjaZadana[0];
+	for (int i = 0; i < 3; i++)
+	{
+		pozycjaZadana[i]=msg->position[i];
+	}
 }
 
 int main(int argc, char **argv)
 {
-	std::cout<<"Jestem przed ";
+	
 	// Inicjalizacja ros-a
 	ros::init(argc,argv,"NONKDL_DKIN");
 	ros::NodeHandle nh;
 	ros::Publisher pub=nh.advertise<geometry_msgs::PoseStamped>("/PoseStamped", 1000);
-	std::cout<<"Jestem przed ";
-	ros::Subscriber sub=nh.subscribe<sensor_msgs::JointState>("/joint_state_publisher", 1000, boost::bind(callback,_1));
+	ros::Subscriber sub=nh.subscribe<sensor_msgs::JointState>("/joint_states", 1000, boost::bind(callback,_1));
 	ros::Rate rate(10);
 
+	double dlugosc;
 	while(ros::ok())
 	{
+		ros::spinOnce();
 		geometry_msgs::PoseStamped doWyslania;
-		sensor_msgs::JointState odebrane;
-		ros::spin();
+
+		//Tutaj musi być obliczanie parametrów do wysłania
+
+		doWyslania.pose.position.x=pozycjaZadana[0];
+		doWyslania.pose.position.y=pozycjaZadana[1];
+		doWyslania.pose.position.z=pozycjaZadana[2];
+		doWyslania.pose.orientation.w=pozycjaZadana[1];
+		doWyslania.pose.orientation.x=pozycjaZadana[1];
+		doWyslania.pose.orientation.y=pozycjaZadana[1];
+		doWyslania.pose.orientation.z=pozycjaZadana[1];
+		
+		
+		pub.publish(doWyslania);
+		rate.sleep();
 	}
 
-	// Deklaracje zmiennych
-	
-	
-
-
-
-	ros::spin();
+//	ros::spin();
+	return 0;
 }
