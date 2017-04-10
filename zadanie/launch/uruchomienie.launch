@@ -1,0 +1,8 @@
+<launch>
+
+
+
+	<node pkg="zadanie" name="nadawca" type="nadawca"/>
+	<node pkg="turtlesim" name="sim" type="turtlesim_node"/>
+
+</launch>
