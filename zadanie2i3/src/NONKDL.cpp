@@ -2,7 +2,6 @@
 #include "geometry_msgs/PoseStamped.h"
 #include "sensor_msgs/JointState.h"
 #include <signal.h>
-#include <termios.h>
 #include <stdio.h>
 #include <iostream>
 
@@ -23,18 +22,22 @@ int main(int argc, char **argv)
 	// Inicjalizacja ros-a
 	ros::init(argc,argv,"NONKDL_DKIN");
 	ros::NodeHandle nh;
-	ros::Publisher pub=nh.advertise<geometry_msgs::PoseStamped>("/PoseStamped", 1000);
+	ros::Publisher pub=nh.advertise<geometry_msgs::PoseStamped>("/PoseStampedNONKDL", 1000);
 	ros::Subscriber sub=nh.subscribe<sensor_msgs::JointState>("/joint_states", 1000, boost::bind(callback,_1));
 	ros::Rate rate(10);
 
 	double dlugosc;
 	while(ros::ok())
 	{
-		ros::spinOnce();
-		geometry_msgs::PoseStamped doWyslania;
+		ros::spinOnce(); // Pobranie informacji od Joint_State_Publishera
+		
+		
+		// Pobranie danych z serwera parametrów
 
 		//Tutaj musi być obliczanie parametrów do wysłania
-
+		
+		geometry_msgs::PoseStamped doWyslania;
+		doWyslania.header.frame_id="link1";
 		doWyslania.pose.position.x=pozycjaZadana[0];
 		doWyslania.pose.position.y=pozycjaZadana[1];
 		doWyslania.pose.position.z=pozycjaZadana[2];
@@ -48,6 +51,5 @@ int main(int argc, char **argv)
 		rate.sleep();
 	}
 
-//	ros::spin();
 	return 0;
 }
