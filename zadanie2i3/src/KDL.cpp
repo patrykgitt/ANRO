@@ -1,6 +1,9 @@
 #include "ros/ros.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "sensor_msgs/JointState.h"
+#include <kdl/kdl.hpp>
+#include <kdl/tree.hpp>
+#include <kdl/chain.hpp>
 #include <signal.h>
 #include <stdio.h>
 #include <iostream>
@@ -37,19 +40,21 @@ int main(int argc, char **argv)
 	{
 		ros::spinOnce(); // Pobranie informacji od Joint_State_Publisher
 		
+		double x,y,z=0; // Współrzędne końcówki
+		
+		KDL::Chain chain; // Stworzenie łańcucha kinematycznego
 
-		//Tutaj musi być obliczanie parametrów do wysłania z użyciem KDL i z uwzględnieniem ograniczeń
-		double x,y,z; // Współrzędne końcówki
-		/*double x = a2*cos(pozycjaZadana[0]-pozycjaZadana[1])+a1*cos(pozycjaZadana[0]);
-		double y = a2*sin(pozycjaZadana[0]-pozycjaZadana[1])+a1*sin(pozycjaZadana[0]);
-		double z = -pozycjaZadana[2];
-		Do testów bez KDL-a
-		*/
-
-
+		double teta1=pozycjaZadana[0];
+		double teta2 = pozycjaZadana[1];
+		double d3 = pozycjaZadana[2];
+		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotZ),KDL::Frame::DH(a1, 0, 0, teta1)));
+		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotZ),KDL::Frame::DH(a2, PI, 0, teta2)));
+		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotZ),KDL::Frame::DH(0, 0, d3, 0)));
+		x = chain.getSegment(2).getFrameToTip().p.data[0];
+		y = chain.getSegment(2).getFrameToTip().p.data[1]; 
 		
 		geometry_msgs::PoseStamped doWyslania;
-		doWyslania.header.frame_id="base_link";
+		doWyslania.header.frame_id="arm3";
 		doWyslania.pose.position.x=x;
 		doWyslania.pose.position.y=y+2.0;
 		doWyslania.pose.position.z=z;

@@ -47,7 +47,9 @@ int main(int argc, char **argv)
 		double x = a2*cos(pozycjaZadana[0]-pozycjaZadana[1])+a1*cos(pozycjaZadana[0]);
 		double y = a2*sin(pozycjaZadana[0]-pozycjaZadana[1])+a1*sin(pozycjaZadana[0]);
 		double z = -pozycjaZadana[2];
-		
+		// Ewentualnie dodać ograniczenia i logowanie
+
+
 		
 		geometry_msgs::PoseStamped doWyslania;
 		doWyslania.header.frame_id="base_link";
