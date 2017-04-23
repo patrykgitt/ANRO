@@ -34,8 +34,12 @@ int main(int argc, char **argv)
 	
 	double a1=1.0,a2=3.0; // Wartości do pobrania z serwera parametrów
 	// Pobranie danych z serwera parametrów
-	
-	
+	//std::vector<double> parametry;
+	std::string parametry;
+	if(nh.getParam("/robot_description",parametry))
+		{
+			std::cout << "mam parametry" << std::endl << parametry;	// W stringu trzeba znaleźć rozmiar 1. arm1 i arm2	
+		}
 	
 	while(ros::ok())
 	{
@@ -57,7 +61,9 @@ int main(int argc, char **argv)
 		doWyslania.pose.position.y=y;
 		doWyslania.pose.position.z=z;
 		doWyslania.pose.orientation.w=0;
-		doWyslania.pose.orientation.x=0; 
+		doWyslania.pose.orientation.x=0;
+		
+
 		doWyslania.pose.orientation.y=0;
 		doWyslania.pose.orientation.z=1.0;
 		
