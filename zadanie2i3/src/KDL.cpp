@@ -4,8 +4,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <iostream>
+#include <math.h>
 
 double pozycjaZadana[3];
+double const PI=M_PI;
 
 // Funkcja do pobrania wartości zadanych
 void callback(const sensor_msgs::JointStateConstPtr &msg) 
@@ -14,6 +16,7 @@ void callback(const sensor_msgs::JointStateConstPtr &msg)
 	{
 		pozycjaZadana[i]=msg->position[i];
 	}
+	pozycjaZadana[0]+=PI/5;
 }
 
 int main(int argc, char **argv)
@@ -24,27 +27,36 @@ int main(int argc, char **argv)
 	ros::NodeHandle nh;
 	ros::Publisher pub=nh.advertise<geometry_msgs::PoseStamped>("/PoseStampedKDL", 1000);
 	ros::Subscriber sub=nh.subscribe<sensor_msgs::JointState>("/joint_states", 1000, boost::bind(callback,_1));
-	ros::Rate rate(10);
+	ros::Rate rate(30);
 
-	double dlugosc;
+
+	// Pobranie danych z serwera parametrów
+	double a1=1.0,a2=3.0; // Rzeczywiste wartości do testów
+	
 	while(ros::ok())
 	{
-		ros::spinOnce(); // Pobranie informacji od Joint_State_Publishera
+		ros::spinOnce(); // Pobranie informacji od Joint_State_Publisher
 		
-		
-		// Pobranie danych z serwera parametrów
 
 		//Tutaj musi być obliczanie parametrów do wysłania z użyciem KDL i z uwzględnieniem ograniczeń
+		double x,y,z; // Współrzędne końcówki
+		/*double x = a2*cos(pozycjaZadana[0]-pozycjaZadana[1])+a1*cos(pozycjaZadana[0]);
+		double y = a2*sin(pozycjaZadana[0]-pozycjaZadana[1])+a1*sin(pozycjaZadana[0]);
+		double z = -pozycjaZadana[2];
+		Do testów bez KDL-a
+		*/
+
+
 		
 		geometry_msgs::PoseStamped doWyslania;
-		doWyslania.header.frame_id="link1";
-		doWyslania.pose.position.x=pozycjaZadana[0];
-		doWyslania.pose.position.y=pozycjaZadana[1];
-		doWyslania.pose.position.z=pozycjaZadana[2];
-		doWyslania.pose.orientation.w=pozycjaZadana[2];
-		doWyslania.pose.orientation.x=pozycjaZadana[2];
-		doWyslania.pose.orientation.y=pozycjaZadana[2];
-		doWyslania.pose.orientation.z=pozycjaZadana[2];
+		doWyslania.header.frame_id="base_link";
+		doWyslania.pose.position.x=x;
+		doWyslania.pose.position.y=y+2.0;
+		doWyslania.pose.position.z=z;
+		doWyslania.pose.orientation.w=0.707;
+		doWyslania.pose.orientation.x=0.0;
+		doWyslania.pose.orientation.y=0.0;
+		doWyslania.pose.orientation.z=-0.707;
 		
 		
 		pub.publish(doWyslania);
