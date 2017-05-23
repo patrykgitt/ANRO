@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(zadanie4)
+project(zadanie5)
 
 ## Add support for C++11, supported in ROS Kinetic and newer
 # add_definitions(-std=c++11)
@@ -57,11 +57,11 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate services in the 'srv' folder
- add_service_files(
-   FILES
-   oint_control_srv.srv
-   jint_control_srv.srv
- )
+# add_service_files(
+#   FILES
+#   Service1.srv
+#   Service2.srv
+# )
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -107,7 +107,7 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES zadanie4
+  LIBRARIES zadanie5
   CATKIN_DEPENDS message_runtime roscpp std_msgs
 #  DEPENDS system_lib
 )
@@ -125,7 +125,7 @@ include_directories(
 
 ## Declare a C++ library
 # add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/zadanie4.cpp
+#   src/${PROJECT_NAME}/zadanie5.cpp
 # )
 
 ## Add cmake target dependencies of the library
@@ -134,11 +134,10 @@ include_directories(
 # add_dependencies(${PROJECT_NAME} ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-add_executable(jint src/jint.cpp)
-add_executable(oint src/oint.cpp)
+add_executable(IKIN src/IKIN.cpp)
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
-# add_executable(${PROJECT_NAME}_node src/zadanie4_node.cpp)
+# add_executable(${PROJECT_NAME}_node src/zadanie5_node.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -149,16 +148,12 @@ add_executable(oint src/oint.cpp)
 ## Add cmake target dependencies of the executable
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-add_dependencies(jint zadanie4_generate_messages_cpp)
-add_dependencies(oint zadanie4_generate_messages_cpp)
+add_dependencies(IKIN zadanie5_generate_messages_cpp)
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(jint
-  ${catkin_LIBRARIES}
-)
-target_link_libraries(oint
+target_link_libraries(IKIN
   ${catkin_LIBRARIES}
 )
 #############
@@ -201,7 +196,7 @@ target_link_libraries(oint
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_zadanie4.cpp)
+# catkin_add_gtest(${PROJECT_NAME}-test test/test_zadanie5.cpp)
 # if(TARGET ${PROJECT_NAME}-test)
 #   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
 # endif()

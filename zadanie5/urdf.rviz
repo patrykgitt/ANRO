@@ -74,12 +74,25 @@ Visualization Manager:
         {}
       Update Interval: 0
       Value: true
+    - Class: rviz/Pose
+      Enabled: true
+      Topic: /PoseStamped
+      Name: OINT
+      Unreliable: false
+      Shape: Arrow
+      Color: 255; 0; 0
+      Alpha: 1
+      Shaft Length: 1.5
+      Shaft Radius: 0.25
+      Head Length: 0.5
+      Head Radius: 0.5
+      Value: true
     - Class: rviz/Marker
       Enabled: true
       Topic: /visualization_marker
       Name: Trajektoria
       Queue Size: 100
-      Value: true     
+      Value: true 
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

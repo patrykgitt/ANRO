@@ -1,0 +1,7 @@
+float64 pozycjaZadana1
+float64 pozycjaZadana2
+float64 pozycjaZadana3
+float64 czasRuchu
+string rodzaj
+---
+string rezultat

@@ -1,0 +1,8 @@
+<launch>
+	<arg name="model" default='$(find zadanie4)/urdf/dynamic.urdf' />
+	<arg name="gui" default="True" />
+	<param name="robot_description" textfile="$(arg model)" />
+	<param name="use_gui" value="$(arg gui)"/>
+	<node pkg="zadanie4" name="oint" type="oint"/>
+	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find zadanie4)/urdf2.rviz" required="true" />
+</launch>

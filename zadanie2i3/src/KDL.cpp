@@ -93,7 +93,7 @@ int main(int argc, char **argv)
 
 		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotZ),KDL::Frame::DH(a1, 0, 0, teta1)));
 		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotZ),KDL::Frame::DH(a2, PI, 0, teta2)));
-		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::RotZ),KDL::Frame::DH(0, 0, d3, 0)));
+		chain.addSegment(KDL::Segment(KDL::Joint(KDL::Joint::TransZ),KDL::Frame::DH(0, 0, d3, 0)));
 		x = chain.getSegment(2).getFrameToTip().p.data[0];
 		y = chain.getSegment(2).getFrameToTip().p.data[1]; 
 		z = chain.getSegment(2).getFrameToTip().p.data[2];
