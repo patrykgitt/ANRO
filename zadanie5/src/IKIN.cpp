@@ -1,12 +1,12 @@
 #include "ros/ros.h"
 #include "geometry_msgs/PoseStamped.h"
 #include "sensor_msgs/JointState.h"
+#include "zadanie4/oint_control_srv.h"
 #include <math.h>
 
 double const PI=M_PI;
 double pozycja[3]; // Pozycja układu końcówki w globalnym układzie odniesienia
 double teta1,teta2,d3; // Szukane wartości
-double roznica; // Różnica kątów teta1 i teta2
 double f=10;
 double teta10=0; // Wartości początkowe - może zbędne
 double teta20=0;
@@ -18,7 +18,6 @@ void callback(const geometry_msgs::PoseStamped::ConstPtr &msg)
 	pozycja[0]=msg->pose.position.x;
 	pozycja[1]=msg->pose.position.y;
 	pozycja[2]=msg->pose.position.z;
-	//roznica = 2*atan2(msg->pose.orientation.z,msg->pose.orientation.w); // Nie wiadomo, czy dobrze działa
 	oint_aktywny=true;
 }
 
@@ -59,50 +58,59 @@ int main(int argc, char **argv)
 		{
 					ROS_WARN("Nie udalo sie pobrac parametrow. Uzyte zostana domyslne wartosci.");
 		}
+	// Wysłanie wiadomości do węzła oint - początkowe położenie robota
+	ros::ServiceClient klient = nh.serviceClient<zadanie4::oint_control_srv>("oint_control_srv");
+
+	zadanie4::oint_control_srv srv;
+	srv.request.x = 4*cos(PI/5);
+	srv.request.y = 4*sin(PI/5);
+	srv.request.z = -1.65;
+	srv.request.czasRuchu = 0.5;
+	for (int i=0;i<50;i++)	
+	klient.call(srv);
 
 	while(ros::ok())
 	{
 		ros::spinOnce(); // Pobranie informacji
 		if(oint_aktywny)		
 		{
-		// Obliczenie odwrotnej kinematyki
-
-		double costeta2=(pozycja[0]*pozycja[0]+pozycja[1]*pozycja[1]-a1*a1-a2*a2)/(2*a1*a2);
-		if(costeta2 <-1 || costeta2 >1)
-		{
-			ROS_ERROR("Wyznaczenie polozenia nie jest mozliwe. Podano punkt spoza przestrzeni operacyjnej robota.");
-			oint_aktywny=false;
-			continue;
-		}
-		double sinteta2=sqrt(1-costeta2*costeta2);
-		double A=a1+a2*costeta2;
-		double B=a2*sinteta2;
-		double sinteta1=(B*pozycja[0]+A*pozycja[1])/(pozycja[0]*pozycja[0]+pozycja[1]*pozycja[1]);
-		double costeta1=(A*pozycja[0]-B*pozycja[1])/(pozycja[0]*pozycja[0]+pozycja[1]*pozycja[1]);
-		teta1=atan2(sinteta1,costeta1)-PI/5;
-		teta2=atan2(sinteta2,costeta2);
-		d3=-pozycja[2];
-		// Potrzeba sprawdzić, czy wartości spełniają ograniczenia
-		if(teta2 > joint2_upper || teta2 < joint2_lower)
-		{
-			ROS_ERROR("Wyznaczenie polozenia nie jest mozliwe.");
-			oint_aktywny=false;
-			continue;
-		}
+			// Obliczenie odwrotnej kinematyki
+			double costeta2=(pozycja[0]*pozycja[0]+pozycja[1]*pozycja[1]-a1*a1-a2*a2)/(2*a1*a2);
+			if(costeta2 <-1 || costeta2 >1)
+			{
+				ROS_ERROR("Wyznaczenie polozenia nie jest mozliwe. Podano punkt spoza przestrzeni operacyjnej robota.");
+				oint_aktywny=false;
+				continue;
+			}
+			double sinteta2=sqrt(1-costeta2*costeta2);
+			double A=a1+a2*costeta2;
+			double B=a2*sinteta2;
+			double sinteta1=(B*pozycja[0]+A*pozycja[1])/(pozycja[0]*pozycja[0]+pozycja[1]*pozycja[1]);
+			double costeta1=(A*pozycja[0]-B*pozycja[1])/(pozycja[0]*pozycja[0]+pozycja[1]*pozycja[1]);
+			teta1=atan2(sinteta1,costeta1)-PI/5;
+			teta2=atan2(sinteta2,costeta2);
+			d3=-pozycja[2];
+			// Potrzeba sprawdzić, czy wartości spełniają ograniczenia
+			if(teta2 > joint2_upper || teta2 < joint2_lower)
+			{
+				ROS_ERROR("Wyznaczenie polozenia nie jest mozliwe.");
+				oint_aktywny=false;
+				continue;
+			}
 		
-		if(d3 > joint3_upper || d3 < joint3_lower)
-		{
-			ROS_ERROR("Wyznaczenie polozenia nie jest mozliwe.");
-			oint_aktywny=false;
-			continue;
-		} 
+			if(d3 > joint3_upper || d3 < joint3_lower)
+			{
+				ROS_ERROR("Wyznaczenie polozenia nie jest mozliwe.");
+				oint_aktywny=false;
+				continue;
+			} 
 		}
-		else // Jeżeli ointaktywny==false
+		/*else // Jeżeli ointaktywny==false
 		{
 			teta1=teta10;
 			teta2=teta20;
 			d3=d30;
-		}
+		}*/
 
 		sensor_msgs::JointState doWyslania;
 		doWyslania.header.stamp=ros::Time::now();
@@ -118,6 +126,5 @@ int main(int argc, char **argv)
 		pub.publish(doWyslania);
 		rate.sleep();		
 	}
-
 	return 0;
 }

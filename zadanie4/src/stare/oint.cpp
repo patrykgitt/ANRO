@@ -10,18 +10,13 @@ double f=10;
 double Tp=1/f;
 double x,y,z,xo=0,yo=0,zo=0,wo=1;
 double x0=0;
-double yy0=0,z0=0,xo0=0,yo0=0,zo0=0,wo0=0;
+double yy0=0,z0=0,xo0=0,yo0=0,zo0=0,wo0=1;
 double px,py,pz=0,ox=0,oy=0,oz,ow,czas;
 bool czyInterpolujemy = true;
 double fi,kx,ky,kz;
 double ox1=0.0,oy1=0.0,oz1=0.0,ow1=1.0;
-
 int n=0; // Liczba iteracji pętli
 int k=0; // Indeks iteracji pętli
-
-double t0,t1,t2,t3,t4,t5,xKat,yKat,zKat;
-bool pierwszeUruchomienie=true;
-
 
 // Procedura do obsługi żądania
 bool procedura(zadanie4::oint_control_srv::Request &req, zadanie4::oint_control_srv::Response &res)
@@ -36,24 +31,10 @@ bool procedura(zadanie4::oint_control_srv::Request &req, zadanie4::oint_control_
 	px=req.x;
 	py=req.y;
 	pz=req.z;
-	
-	
-	xKat=req.xkat;
-	yKat=req.ykat;
-	zKat=req.zkat;
-	
-	t0 = std::cos(zKat * 0.5);
-	t1 = std::sin(zKat * 0.5);
-	t2 = std::cos(xKat * 0.5);
-	t3 = std::sin(xKat * 0.5);
-	t4 = std::cos(yKat * 0.5);
-	t5 = std::sin(yKat * 0.5);
-
-	ow = t0 * t2 * t4 + t1 * t3 * t5;
-	ox = t0 * t3 * t4 - t1 * t2 * t5;
-	oy = t0 * t2 * t5 + t1 * t3 * t4;
-	oz = t1 * t2 * t4 - t0 * t3 * t5;
-	
+	ox=req.ox;
+	oy=req.oy;
+	oz=req.oz;
+	ow=req.ow;
 	czas=req.czasRuchu;
 	czyInterpolujemy=true;	
 	n=czas/Tp; 
@@ -77,8 +58,6 @@ bool procedura(zadanie4::oint_control_srv::Request &req, zadanie4::oint_control_
 		kz=oz/sinfipol;
 	}
 	else kx=ky=kz=0;
-	
-	pierwszeUruchomienie=false;
 	
 	return true;
 }
@@ -107,25 +86,14 @@ marker.color.r = 0.0;
         marker.color.g = 1.0;
         marker.color.b = 0.5;
         marker.color.a = 1;
-	geometry_msgs::PoseStamped doWyslania;
-	doWyslania.header.frame_id="/base_link";
-	
+
+
 //marker.type=visualization_msgs::Marker::POINTS;
 //visualization_msgs::MarkerArray markerArray;
 ros::Publisher pub2=nh.advertise<visualization_msgs::Marker>("/visualization_marker", 100);
 	while(ros::ok())
 	{
 		ros::spinOnce();
-		if(pierwszeUruchomienie == true){
-			doWyslania.pose.position.x=0;
-			doWyslania.pose.position.y=0;
-			doWyslania.pose.position.z=0;
-			doWyslania.pose.orientation.w=1;
-			doWyslania.pose.orientation.x=0;
-			doWyslania.pose.orientation.y=0;
-			doWyslania.pose.orientation.z=0;
-			pub.publish(doWyslania);
-		}
 		if(!czyInterpolujemy) continue;
 
 		if(n==0 && k==1)
@@ -137,7 +105,6 @@ ros::Publisher pub2=nh.advertise<visualization_msgs::Marker>("/visualization_mar
 			yo=oy;
 			zo=oz;
 			wo=ow;
-		
 		}
 		else if(k<1 || n < 1)
 		{
@@ -184,7 +151,8 @@ ros::Publisher pub2=nh.advertise<visualization_msgs::Marker>("/visualization_mar
 
 	    marker.id++;
 	
-		
+		geometry_msgs::PoseStamped doWyslania;
+		doWyslania.header.frame_id="/base_link";
 		doWyslania.pose.position.x=x;
 		doWyslania.pose.position.y=y;
 		doWyslania.pose.position.z=z;
@@ -193,11 +161,7 @@ ros::Publisher pub2=nh.advertise<visualization_msgs::Marker>("/visualization_mar
 		doWyslania.pose.orientation.y=yo;
 		doWyslania.pose.orientation.z=zo;
 	marker.pose=doWyslania.pose;
-/*geometry_msgs::Point punkt;
-punkt.x=px;
-punkt.y=py;
-punkt.z=pz;
-marker.points.push_back(punkt);	*/	
+
 		pub2.publish(marker);
 		pub.publish(doWyslania);
 		rate.sleep();
