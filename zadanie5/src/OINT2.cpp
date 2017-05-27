@@ -11,15 +11,13 @@ double const PI=M_PI;
 double f=10;
 double Tp=1/f;
 double x,y,z,xo=0,yo=0,zo=0,wo=1;
-double x0=0;
-double yy0=0,z0=0,xo0=0,yo0=0,zo0=0,wo0=0;
+double x0=3.0;
+double yy0=(2.5*sqrt(7))/4,z0=-1.5,xo0=0,yo0=0,zo0=0,wo0=0;
 double px,py,pz=0,ox=0,oy=0,oz,ow,czas;
 bool czyInterpolujemy = true;
 double fi,kx,ky,kz;
 double ox1=0.0,oy1=0.0,oz1=0.0,ow1=1.0;
-double xpop=0;
-double ypop=0;
-double zpop=0;
+
 
 int n=0; // Liczba iteracji pętli
 int k=0; // Indeks iteracji pętli
@@ -92,14 +90,14 @@ bool procedura(zadanie4::oint_control_srv::Request &req, zadanie4::oint_control_
 int main(int argc, char **argv)
 {
 	// Inicjalizacja ros-a
-	ros::init(argc,argv,"oint");
+	ros::init(argc,argv,"OINT2");
 	ros::NodeHandle nh;
 	ros::Publisher pub=nh.advertise<geometry_msgs::PoseStamped>("/PoseStamped", 1000);
 	ros::ServiceServer serwer = nh.advertiseService("oint_control_srv",procedura);
 	ros::Rate rate(f);
 
 	geometry_msgs::PoseStamped doWyslania;
-	doWyslania.header.frame_id="/world";
+	doWyslania.header.frame_id="/base_link";
 	nav_msgs::Path trajektoria;
 
 ros::Publisher pub2=nh.advertise<nav_msgs::Path>("/trajektoria", 1);
@@ -107,17 +105,18 @@ ros::Publisher pub2=nh.advertise<nav_msgs::Path>("/trajektoria", 1);
 	{
 		ros::spinOnce();
 		if(pierwszeUruchomienie == true){
-			doWyslania.pose.position.x=0;
-			doWyslania.pose.position.y=0;
-			doWyslania.pose.position.z=0;
+			x=3.0;
+			y=(2.5*sqrt(7))/4;
+			z=-1.5;
+			doWyslania.pose.position.x=x;
+			doWyslania.pose.position.y=y;
+			doWyslania.pose.position.z=z;
 			doWyslania.pose.orientation.w=1;
 			doWyslania.pose.orientation.x=0;
 			doWyslania.pose.orientation.y=0;
 			doWyslania.pose.orientation.z=0;
 			pub.publish(doWyslania);
-			xpop=x;
-			ypop=y;
-			zpop=z;
+			
 		}
 		if(!czyInterpolujemy) continue;
 
@@ -176,7 +175,7 @@ ros::Publisher pub2=nh.advertise<nav_msgs::Path>("/trajektoria", 1);
 		}
 	
 		geometry_msgs::PoseStamped doWyslania;
-		doWyslania.header.frame_id="/world";
+		doWyslania.header.frame_id="/base_link";
 		doWyslania.pose.position.x=x;
 		doWyslania.pose.position.y=y;
 		doWyslania.pose.position.z=z;
@@ -188,7 +187,7 @@ ros::Publisher pub2=nh.advertise<nav_msgs::Path>("/trajektoria", 1);
 
 	
 	trajektoria.poses.push_back(doWyslania);
-	trajektoria.header.frame_id="/world";
+	trajektoria.header.frame_id="/base_link";
 	trajektoria.header.stamp=ros::Time::now();
 
 		pub2.publish(trajektoria);

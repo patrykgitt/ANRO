@@ -87,12 +87,13 @@ Visualization Manager:
       Head Length: 0.5
       Head Radius: 0.5
       Value: true
-    - Class: rviz/Marker
+    - Class: rviz/Path
       Enabled: true
-      Topic: /visualization_marker
+      Unreliable: false
+      Topic: /trajektoria
+      Color: 255; 255; 0
       Name: Trajektoria
-      Queue Size: 100
-      Value: true 
+     
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

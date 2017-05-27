@@ -57,10 +57,16 @@ Visualization Manager:
       Axes Length: 1.5
       Axes Radius: 0.25
       Value: true 
+    - Class: rviz/Path
+      Enabled: true
+      Unreliable: false
+      Topic: /trajektoria
+      Color: 255; 255; 0
+      Name: Trajektoria
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: /base_link
+    Fixed Frame: /world
   Name: root
   Tools:
     - Class: rviz/Interact

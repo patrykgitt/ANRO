@@ -62,10 +62,10 @@ int main(int argc, char **argv)
 	ros::ServiceClient klient = nh.serviceClient<zadanie4::oint_control_srv>("oint_control_srv");
 
 	zadanie4::oint_control_srv srv;
-	srv.request.x = 4*cos(PI/5);
-	srv.request.y = 4*sin(PI/5);
-	srv.request.z = -1.65;
-	srv.request.czasRuchu = 0.5;
+	srv.request.x = 3.0;
+	srv.request.y = (2.5*sqrt(7))/4;
+	srv.request.z = -1.5;
+	srv.request.czasRuchu = 0.1;
 	for (int i=0;i<50;i++)	
 	klient.call(srv);
 
@@ -105,25 +105,21 @@ int main(int argc, char **argv)
 				continue;
 			} 
 		}
-		/*else // Jeżeli ointaktywny==false
+		if(oint_aktywny)
 		{
-			teta1=teta10;
-			teta2=teta20;
-			d3=d30;
-		}*/
+			sensor_msgs::JointState doWyslania;
+			doWyslania.header.stamp=ros::Time::now();
+			// Tworzenie wiadomości do wysłania	
+			doWyslania.header.frame_id="";
+			doWyslania.position.push_back(teta1); // Dodaje element na końcu wektora
+			doWyslania.position.push_back(teta2);
+			doWyslania.position.push_back(d3);
+			doWyslania.name.push_back("joint1");
+			doWyslania.name.push_back("joint2");
+			doWyslania.name.push_back("joint3");
 
-		sensor_msgs::JointState doWyslania;
-		doWyslania.header.stamp=ros::Time::now();
-		// Tworzenie wiadomości do wysłania	
-		doWyslania.header.frame_id="";
-		doWyslania.position.push_back(teta1); // Dodaje element na końcu wektora
-		doWyslania.position.push_back(teta2);
-		doWyslania.position.push_back(d3);
-		doWyslania.name.push_back("joint1");
-		doWyslania.name.push_back("joint2");
-		doWyslania.name.push_back("joint3");
-
-		pub.publish(doWyslania);
+			pub.publish(doWyslania);
+		}
 		rate.sleep();		
 	}
 	return 0;

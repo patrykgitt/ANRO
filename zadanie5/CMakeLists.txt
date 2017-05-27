@@ -134,6 +134,8 @@ include_directories(
 
 ## Declare a C++ executable
 add_executable(IKIN src/IKIN.cpp)
+add_executable(OCMD src/OCMD.cpp)
+add_executable(OINT2 src/OINT2.cpp)
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 # add_executable(${PROJECT_NAME}_node src/zadanie5_node.cpp)
@@ -148,11 +150,19 @@ add_executable(IKIN src/IKIN.cpp)
 ## same as for the library above
 # add_dependencies(${PROJECT_NAME}_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 add_dependencies(IKIN zadanie5_generate_messages_cpp)
+add_dependencies(OCMD zadanie5_generate_messages_cpp)
+add_dependencies(OINT2 zadanie5_generate_messages_cpp)
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
 target_link_libraries(IKIN
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(OCMD
+  ${catkin_LIBRARIES}
+)
+target_link_libraries(OINT2
   ${catkin_LIBRARIES}
 )
 #############
